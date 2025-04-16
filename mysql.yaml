@@ -9,7 +9,7 @@
         name: "{{ item }}"
         executable: pip3.9 #python3.9 is installed, so need we need to mention pip3.9 as executable
       loop: # these are python libraries, required to connect to mysql server, we will see an error without these while running the playbook
-        - cryptography
+        - cryptography # this package is required for error handling to work fine.
         - PyMySQL
 
     - name: Install MySQL server
@@ -28,7 +28,7 @@
         login_user: root
         login_password: "{{ mysql_root_password }}"
         login_host: mysql.daws82s.online
-      register: mysql_info # to store the output of this task
+      register: mysql_info # to store the output of the task
       ignore_errors: true # error handling
       #  we set ignore errrors as true, so it will not exit if there is an error(root password not set), it will continue to next task
 
@@ -36,7 +36,7 @@
       ansible.builtin.debug:
         msg: "MySQL info: {{ mysql_info }}"
 
-    - name: setup root password
+    - name: setup root password # this task will skip when root password is already set.
       ansible.builtin.command: " mysql_secure_installation --set-root-pass {{ mysql_root_password }} "
-      when: mysql_info.failed is true #run when password is not set #small t
+      when: mysql_info.failed is true #run when password is not set - true "t" is lowercase
       # using output of previous task as an input to this task, to check whether root password is set are not
