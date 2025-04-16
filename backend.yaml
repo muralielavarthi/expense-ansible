@@ -35,7 +35,7 @@
         src: /tmp/backend.zip
         dest: /app
         remote_src: yes # ansible by default thinks src is in ansible control machine
-        # # Indicates that the source file is on the remote server(nodes), not the local machine
+        # Indicates that the source file is on the remote server(nodes), not the local machine
 
     - name: Install dependencies
       community.general.npm:
