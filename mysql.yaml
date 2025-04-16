@@ -4,11 +4,11 @@
   vars:
     mysql_root_password: ExpenseApp@1
   tasks:
-    - name: Install MySQL libraries # these are python libraries
+    - name: Install MySQL libraries
       ansible.builtin.pip:
         name: "{{ item }}"
-        executable: pip3.9
-      loop:
+        executable: pip3.9 #python3.9 is installed, so need we need to mention pip3.9 as executable
+      loop: # these are python libraries, required to connect to mysql server, we will see an error without these while running the playbook
         - cryptography
         - PyMySQL
 
@@ -28,8 +28,9 @@
         login_user: root
         login_password: "{{ mysql_root_password }}"
         login_host: mysql.daws82s.online
-      register: mysql_info
-      ignore_errors: true # to handle errors without exiting, ignore the errrors and proceed further.
+      register: mysql_info # to store the output of this task
+      ignore_errors: true # error handling
+      #  we set ignore errrors as true, so it will not exit if there is an error(root password not set), it will continue to next task
 
     - name: print the output
       ansible.builtin.debug:
@@ -38,3 +39,4 @@
     - name: setup root password
       ansible.builtin.command: " mysql_secure_installation --set-root-pass {{ mysql_root_password }} "
       when: mysql_info.failed is true #run when password is not set #small t
+      # using output of previous task as an input to this task, to check whether root password is set are not
