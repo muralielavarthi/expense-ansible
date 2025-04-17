@@ -23,7 +23,7 @@
     - name: create app directory
       ansible.builtin.file:
         path: /app
-        state: directory
+        state: directory # if state is not mentioned, file will be created, otherwise it is directory.
 
     - name: download backend code
       ansible.builtin.get_url:
@@ -34,8 +34,10 @@
       ansible.builtin.unarchive:
         src: /tmp/backend.zip
         dest: /app
-        remote_src: yes # ansible by default thinks src is in ansible control machine
-        # Indicates that the source file is on the remote server(nodes), not the local machine
+        remote_src: yes
+        # By default, it assumes the archive file is on your or master node.
+        # Then, it copies that archive to the worker node before extracting it.
+        # But here, archive file is already present in worker node, so we are telling ansible to just archive it from worker node.
 
     - name: Install dependencies
       community.general.npm:
