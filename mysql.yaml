@@ -40,3 +40,4 @@
       ansible.builtin.command: " mysql_secure_installation --set-root-pass {{ mysql_root_password }} "
       when: mysql_info.failed is true #run when password is not set - true "t" is lowercase
       # using output of previous task as an input to this task, to check whether root password is set are not
+      # this is not idempotent since it command module, we have to control it using when condition.
