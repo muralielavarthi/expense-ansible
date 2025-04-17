@@ -4,8 +4,10 @@
   tasks:
     - name: disable current nodejs
       ansible.builtin.command: dnf module disable nodejs -y
+      # you will see yellow color while running playbook multiple times,
+      # because this one is not idempotent since we used command module.
 
-    - name: enable nodejs 20
+    - name: enable nodejs 20 # same here, yellow color
       ansible.builtin.command: dnf module enable nodejs:20 -y
 
     - name: install nodejs
@@ -45,14 +47,14 @@
 
     - name: copy backend service
       ansible.builtin.copy:
-        src: backend.service # here, this file is present control machine, so will are not giving - remote_src: yes
+        src: backend.service # here, src file is present in master node or control machine, so will are not giving - remote_src as yes
         dest: /etc/systemd/system/backend.service
 
     - name: install python libs
       ansible.builtin.pip:
         name: "{{ item }}"
         executable: pip3.9 #executable parameter specifies which Python interpreter or pip executable to use when installing the packages.
-      loop:
+      loop: # these libraries are required to import sql file to database
         - cryptography
         - PyMySQL
 
@@ -61,7 +63,7 @@
     - name: import mysql data
       community.mysql.mysql_db:
         state: import
-        name: all # name parameter typically refers to the name of the MySQL database
+        name: all # name: all means: "import into a database named all.
         login_user: root
         login_password: ExpenseApp@1
         login_host: mysql.daws82s.online
@@ -72,4 +74,4 @@
         enabled: true
         state: restarted
         daemon_reload: true
-        name: backend
+        name: backend # name of the systemd service
