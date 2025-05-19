@@ -7,12 +7,9 @@
     - name: Install MySQL libraries
       ansible.builtin.pip:
         name: "{{ item }}"
-        executable: pip3.9 #python3.9 is installed, so need we need to mention pip3.9 as executable
       loop: # these are python libraries, required to connect to mysql server, we will see an error without these while running the playbook
         - cryptography # this package is required for error handling to work fine.
         - PyMySQL
-# if executable: pip3.9 is not mentioned, it will install packages with default python version.
-# which will not be compatiable some times
     - name: Install MySQL server
       ansible.builtin.package:
         name: mysql-server
